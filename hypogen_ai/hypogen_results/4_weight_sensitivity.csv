@@ -1,0 +1,6 @@
+﻿weights,top1_by_composite,rank_of_selected,selected_on_pareto_front,knee_point
+default_0.40_0.35_0.25,Q79N,12,False,Q79S
+equal_1:1:1,Q79N,18,False,Q79S
+safety_first_0.50_0.25_0.25,Q79N,11,False,Q79S
+food_agro_0.20_0.40_0.40,Y88F,66,False,Q79S
+safety_heavy_0.60_0.20_0.20,Q79N,10,False,Q79S

@@ -1,0 +1,21 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.14.7, pytest-9.1.1, pluggy-1.7.0 -- C:\Users\ns143\AppData\Local\Python\pythoncore-3.14-64\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\ns143\.gemini\antigravity\scratch\hypogen_ai
+plugins: anyio-4.15.1, platformdirs-4.13.5
+collecting ... collected 12 items
+
+tests/test_audit_verification.py::TestScientificAudit::test_01_celiac_33mer_alignment_and_coordinates PASSED [  8%]
+tests/test_audit_verification.py::TestScientificAudit::test_02_no_silent_fallback_on_invalid_accession PASSED [ 16%]
+tests/test_audit_verification.py::TestScientificAudit::test_03_crc64_and_metadata_integrity PASSED [ 25%]
+tests/test_audit_verification.py::TestScientificAudit::test_04_mode_classification PASSED [ 33%]
+tests/test_audit_verification.py::TestScientificAudit::test_05_celiac_vs_ige_separation PASSED [ 41%]
+tests/test_audit_verification.py::TestScientificAudit::test_06_general_protein_mode_epitope_scanning PASSED [ 50%]
+tests/test_audit_verification.py::TestScientificAudit::test_07_esm_delta_llr PASSED [ 58%]
+tests/test_audit_verification.py::TestScientificAudit::test_08_cysteine_loss_penalty PASSED [ 66%]
+tests/test_audit_verification.py::TestScientificAudit::test_09_general_protein_scoring_honesty PASSED [ 75%]
+tests/test_audit_verification.py::TestScientificAudit::test_10_pareto_dominance_and_knee_point PASSED [ 83%]
+tests/test_audit_verification.py::TestScientificAudit::test_11_crispr_sgrna_authentic_cds_and_hexaploid_caveat PASSED [ 91%]
+tests/test_audit_verification.py::TestScientificAudit::test_12_bilingual_translations PASSED [100%]
+
+============================= 12 passed in 10.22s =============================

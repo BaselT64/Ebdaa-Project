@@ -1,0 +1,155 @@
+================================================================================
+الخطوة 1: العثور على تسلسل الـ CDS واستدعاؤه في app.py
+================================================================================
+1. مفتاح تسلسل CDS في core/uniprot_fetcher.py (الأسطر 45 إلى 64):
+اسم المفتاح: "cds_sequence" و "nucleotide_cds_reference"
+رقم الأسطر في core/uniprot_fetcher.py: 45 - 64
+طول التسلسل بالنيوكليوتيدات: 921 bp
+المصدر المكتوب في الكود: EMBL:X17361.1 (protein_id: CAA35238.1, Triticum aestivum alpha/beta-gliadin)
+
+النص المقتبس حرفياً من core/uniprot_fetcher.py:
+        "nucleotide_cds_reference": {
+            "database": "EMBL",
+            "accession": "X17361.1",
+            "protein_id": "CAA35238.1",
+            "description": "alpha/beta-gliadin",
+            "cds_length_bp": 921,
+            "molecule": "mRNA/cDNA",
+            "verified_translation_match": True
+        },
+        "cds_sequence": (
+            "ATGAAGACCTTTCTCATCCTTGCCCTCCTTGCTATTGTAGCAACCACCGCCAGAATTGCAGTTAGAGTTCCAGTGCCACAATTGCAGCCACAAAATCCATC"
+            "TCAGCAACAACCACAAGAGCAAGTTCCATTGGTACAACAACAACAATTTCCAGGGCAGCAACAACCATTTCCACCACAACAGCCATATCCGCAGCCGCAAC"
+            "CATTTCCATCACAACAACCATATCTGCAGCTGCAACCATTTCCGCAGCCGCAACTACCATATCCGCAGCCGCAACTACCATATCCGCAGCCGCAACTACCA"
+            "TATCCGCAGCCGCAACCATTTCGACCACAACAACCATATCCACAATCGCAACCACAGTATTCGCAACCACAACAACCAATTTCGCAGCAGCAGCAGCAGCA"
+            "ACAACAACAACAACAACAAAAACAACAACAACAACAACAACAACAGATCCTTCAACAAATTTTGCAACAACAACTGATTCCATGCAGGGATGTTGTATTGC"
+            "AACAACACAGCATAGCGTATGGAAGCTCACAAGTTTTGCAACAAAGTACTTACCAGCTGGTGCAACAATTGTGTTGTCAGCAGCTGTGGCAGATCCCCGAG"
+            "CAGTCGCGGTGCCAAGCCATCCACAATGTTGTTCATGCTATTATTCTGCATCAACAGCAACAACAACAACAACAACAACAACAACAACCGTTGAGCCAGGT"
+            "CTCCTTCCAACAGCCTCAACAACAATATCCATCAGGCCAGGGCTCCTTCCAGCCATCTCAGCAAAACCCACAGGCCCAGGGCTCTGTCCAGCCTCAACAAC"
+            "TGCCCCAGTTTGAGGAAATAAGGAACCTAGCGCTAGAGACGCTACCTGCAATGTGCAATGTCTATATCCCTCCATATTGCACCATTGCTCCAGTTGGCATC"
+            "TTCGGTACTAAC"
+        ),
+
+2. استدعاء design_sgrnas_for_mutation في app.py (الأسطر 923 إلى 930):
+        # Pass verified CDS if available (e.g. for P18573)
+        cds_seq = protein_data.get("cds_sequence")
+        crispr_data = crispr_engine.design_sgrnas_for_mutation(
+            full_protein_sequence=full_seq,
+            mutation_pos_1indexed=pos,
+            wildtype_aa=wt_aa,
+            mutant_aa=mut_aa,
+            cds_sequence=cds_seq
+        )
+
+هل يمرَّر cds_sequence له أم لا؟
+نعم، يمرر له المتغير cds_seq المستخرج من قاموس البروتين (cds_sequence=cds_seq).
+
+
+================================================================================
+الخطوة 2: مخرجات تشغيل verify_cds.py
+================================================================================
+======================================================================
+التحقق من تسلسل CDS لبروتين القمح P18573 (Alpha/beta-gliadin MM1)
+======================================================================
+المصدر الموثق في الكود: EMBL:X17361.1 (ProteinId: CAA35238.1)
+طول تسلسل الـ CDS بالنيوكليوتيدات: 921 bp
+طول تسلسل البروتين بالأحماض الأمينية: 307 aa
+طول التسلسل المترجم: 307 aa
+الكودون الأول (Start): ATG -> المترجم: M | الأصلي: M
+الكودون النهائي (End): AAC -> المترجم: N | الأصلي: N
+
+هل الترجمة تطابق البروتين حرفًا بحرف؟ True
+عدد الاختلافات: 0
+تطابق تام بنسبة 100% بين جميع الأحماض الأمينية (307/307).
+
+الكودونات والأحماض الأمينية في المواضع 75 إلى 80 (ببتيد 33-mer وموضع Q77):
+  الموضع 75: الحمض الأميني = Y | الكودون = TAT | المترجم = Y
+  الموضع 76: الحمض الأميني = L | الكودون = CTG | المترجم = L
+  الموضع 77: الحمض الأميني = Q | الكودون = CAG | المترجم = Q <-- (موضع طفرة Q77 المستهدفة)
+  الموضع 78: الحمض الأميني = L | الكودون = CTG | المترجم = L
+  الموضع 79: الحمض الأميني = Q | الكودون = CAA | المترجم = Q <-- (موضع طفرة Q79)
+  الموضع 80: الحمض الأميني = P | الكودون = CCA | المترجم = P
+
+
+================================================================================
+الخطوة 3: مخرجات تشغيل run_crispr_with_cds.py
+================================================================================
+================================================================================
+تصميم كريسبر للطفرة: Q77S (الموضع 77: Q -> S)
+================================================================================
+[أولاً: التصميم باستخدام تسلسل CDS الموثق (EMBL:X17361.1)]
+  has_verified_cds     : True
+  dna_provenance       : [RETRIEVED_REFERENCE] Verified Biological CDS (EMBL:X17361.1 / UniProt)
+  total_guides_found   : 6
+  target_codon_wt      : CAG
+  target_codon_mut     : AGC
+
+  أفضل 5 أدلة SpCas9 (بناءً على درجة كفاءة القطع على الهدف):
+    1. protospacer: AATGGTTGCAGGCTCAGATA | pam: TGG | strand: Antisense (-)  | cut_offset_bp:  4.5 | gc_content_pct: 45.0% | on_target_score: 96.0% | off_target_risk_pct:  1.2% | off_target_risk_tier: Minimal (<6%)
+    2. protospacer: GGTAGTTGCGGCTGCGGAAA | pam: TGG | strand: Antisense (-)  | cut_offset_bp: 13.5 | gc_content_pct: 60.0% | on_target_score: 85.0% | off_target_risk_pct:  1.2% | off_target_risk_tier: Minimal (<6%)
+    3. protospacer: GGATATGGTAGTTGCGGCTG | pam: CGG | strand: Antisense (-)  | cut_offset_bp: 19.5 | gc_content_pct: 55.0% | on_target_score: 81.0% | off_target_risk_pct:  2.8% | off_target_risk_tier: Minimal (<6%)
+    4. protospacer: GCGGCTGCGGAAATGGTTGC | pam: AGG | strand: Antisense (-)  | cut_offset_bp:  6.5 | gc_content_pct: 65.0% | on_target_score: 76.0% | off_target_risk_pct:  3.2% | off_target_risk_tier: Minimal (<6%)
+    5. protospacer: CTCAGATATGGTTGTTGTGA | pam: TGG | strand: Antisense (-)  | cut_offset_bp: 16.5 | gc_content_pct: 40.0% | on_target_score: 75.0% | off_target_risk_pct:  7.0% | off_target_risk_tier: Low (6-15%)
+
+  [حفظ] تم حفظ جدول الأدلة الكامل (6 دليلاً) في: C:\Users\ns143\.gemini\antigravity\scratch\hypogen_ai\hypogen_results\7_sgrna_cds_Q77S.csv
+
+[ثانياً: المقارنة مع التصميم الافتراضي بدون CDS (In-Silico Reverse Translation)]
+  has_verified_cds     : False
+  dna_provenance       : [ILLUSTRATIVE_HEURISTIC] In-silico reverse-translation (Plant codon consensus)
+  total_guides_found   : 10
+  target_codon_wt      : CAG
+  target_codon_mut     : AGC
+  أفضل دليل بدون CDS  : AACGGCTGCAGGCTCAGGTA | pam: CGG | strand: Antisense (-) | on_target_score: 96.0% | off_target_risk_pct: 1.2%
+
+
+================================================================================
+تصميم كريسبر للطفرة: Q79S (الموضع 79: Q -> S)
+================================================================================
+[أولاً: التصميم باستخدام تسلسل CDS الموثق (EMBL:X17361.1)]
+  has_verified_cds     : True
+  dna_provenance       : [RETRIEVED_REFERENCE] Verified Biological CDS (EMBL:X17361.1 / UniProt)
+  total_guides_found   : 6
+  target_codon_wt      : CAA
+  target_codon_mut     : AGC
+
+  أفضل 5 أدلة SpCas9 (بناءً على درجة كفاءة القطع على الهدف):
+    1. protospacer: GGATATGGTAGTTGCGGCTG | pam: CGG | strand: Antisense (-)  | cut_offset_bp: 13.5 | gc_content_pct: 55.0% | on_target_score: 91.0% | off_target_risk_pct:  1.2% | off_target_risk_tier: Minimal (<6%)
+    2. protospacer: GGTAGTTGCGGCTGCGGAAA | pam: TGG | strand: Antisense (-)  | cut_offset_bp:  7.5 | gc_content_pct: 60.0% | on_target_score: 91.0% | off_target_risk_pct:  1.2% | off_target_risk_tier: Minimal (<6%)
+    3. protospacer: AATGGGCTCAGCTGCAGATA | pam: TGG | strand: Antisense (-)  | cut_offset_bp: 10.5 | gc_content_pct: 50.0% | on_target_score: 85.0% | off_target_risk_pct:  1.2% | off_target_risk_tier: Minimal (<6%)
+    4. protospacer: GTAGTTGCGGCTGCGGAAAT | pam: GGG | strand: Antisense (-)  | cut_offset_bp:  6.5 | gc_content_pct: 55.0% | on_target_score: 83.0% | off_target_risk_pct:  1.2% | off_target_risk_tier: Minimal (<6%)
+    5. protospacer: GGCTGCGGATATGGTAGTTG | pam: CGG | strand: Antisense (-)  | cut_offset_bp: 19.5 | gc_content_pct: 55.0% | on_target_score: 81.0% | off_target_risk_pct:  2.8% | off_target_risk_tier: Minimal (<6%)
+
+  [حفظ] تم حفظ جدول الأدلة الكامل (6 دليلاً) في: C:\Users\ns143\.gemini\antigravity\scratch\hypogen_ai\hypogen_results\7_sgrna_cds_Q79S.csv
+
+[ثانياً: المقارنة مع التصميم الافتراضي بدون CDS (In-Silico Reverse Translation)]
+  has_verified_cds     : False
+  dna_provenance       : [ILLUSTRATIVE_HEURISTIC] In-silico reverse-translation (Plant codon consensus)
+  total_guides_found   : 10
+  target_codon_wt      : CAG
+  target_codon_mut     : AGC
+  أفضل دليل بدون CDS  : AACGGGCTCAGCTGCAGGTA | pam: CGG | strand: Antisense (-) | on_target_score: 85.0% | off_target_risk_pct: 1.2%
+
+
+================================================================================
+الخطوة 4: التحقق من مستودع GitHub
+================================================================================
+الرابط المذكور: https://github.com/BaselT64/Ebdaa-Project
+
+الأوامر المنفذة من داخل مجلد المشروع:
+Set-Location "C:\Users\ns143\.gemini\antigravity\scratch\hypogen_ai"
+
+1. git remote -v
+المخرجات:
+fatal: not a git repository (or any of the parent directories): .git
+
+2. git log -3 --oneline
+المخرجات:
+fatal: not a git repository (or any of the parent directories): .git
+
+3. git status --short
+المخرجات:
+fatal: not a git repository (or any of the parent directories): .git
+
+المجلد C:\Users\ns143\.gemini\antigravity\scratch\hypogen_ai ليس مستودع git محلي (لا يحتوي على مجلد .git).
+هل الملفات الأساسية (app.py و core و models و scoring و crispr و tests) في المستودع مطابقة لما في المجلد الحالي؟
+لا أعرف (بسبب عدم وجود ربط git محلي مع المستودع الخارجي داخل المجلد وعدم توفر إمكانية مقارنة الملفات بدون استنساخ أو الوصول إلى المستودع عبر git).

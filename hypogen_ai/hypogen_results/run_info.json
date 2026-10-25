@@ -1,0 +1,20 @@
+{
+  "python": "3.14.7",
+  "engine": {
+    "checkpoint": "facebook/esm2_t6_8M_UR50D",
+    "device": "cpu",
+    "status": "Online (PyTorch ESM-2)",
+    "parameter_count": 7512474,
+    "architecture": "ESM-2 Masked LM (Transformer encoder)",
+    "evidence_level": "[COMPUTATIONAL_PREDICTION]"
+  },
+  "sequence_source": "live UniProt",
+  "sequence_length": 307,
+  "sequence_equals_code_cache": true,
+  "scan_positions": [
+    76,
+    108
+  ],
+  "selected_mutation": "Q77S",
+  "seconds": 6.7
+}
